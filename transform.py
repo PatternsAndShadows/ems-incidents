@@ -1,4 +1,4 @@
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Extract module ~~~~~
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Transform module ~~~~~
 import logging
 
 logger = logging.getLogger(__name__)
@@ -46,7 +46,7 @@ class IndianaEmsTransform(EmergencyMedicalServiceRunsTransformer):
             self.validate_dataframe()
             self.replace_nulls(column_name='INCIDENT_COUNTY')
         except Exception as ex:
-            print(ex)
+            logger.error("exception in transform_ems_incident_data: " + ex)
 
     def replace_nulls(self, column_name, replacement='N/A'):
         self.df[column_name] = self.df[column_name].fillna(replacement)

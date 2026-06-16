@@ -1,7 +1,12 @@
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Extract module ~~~~~
+import boto3
+import logging
+
+logger = logging.getLogger(__name__)
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ LoadEmsDataset ~~~
 #   Base class for loading EMS datasets into datastores
 #
-import boto3
+
 
 class LoadEmsData:
     def __init__(self, args: str):
@@ -34,9 +39,9 @@ class LoadEmsData:
                     compression='snappy',   # Standard efficient compression for Parquet
                     index=False             # Excludes the pandas row index from saving
                 )
-                print(f"Successfully saved to {s3_path}")
+                logger.info(f"Successfully saved recordset to {s3_path}")
             except Exception as e:
-                print(f"An error occurred in write data to S3:\n{e}")
+                logger.error(f"An error occurred in write data to S3:\n{e}")
         except Exception as ex:
-            print(f'An error occurred in loading ems df:\n{ex}')
+            logger.error(f'An error occurred in loading ems df:\n{ex}')
 

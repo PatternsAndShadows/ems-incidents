@@ -35,6 +35,7 @@ def main(args):
     transform.transform_ems_incident_data()                        #TODO create a factory class?
     loader.set_df(transform.get_transformed_df())
     loader.load_df_into_s3()
+    logger.info("ems-incident run complete")
 
 
 if __name__ == '__main__':

@@ -101,7 +101,7 @@ class IdhsDataExtractor(JsonDataExtractor):
             # 2. Check the success element
             if not payload.get("success"):
                 raise ValueError("API Request failed according to 'success' status flag.")
-            print("✅ API Request validation successful.")
+            logger.info("✅ API Request validation successful.")
 
             # Safely extract the inner result dictionary
             result = payload.get("result", {})
@@ -112,31 +112,31 @@ class IdhsDataExtractor(JsonDataExtractor):
             if next_link:
                 # Reconstruct full URL if API returns relative pathing
                 full_next_url = up.urljoin(source_url, next_link)
-                print(f"🔗 Next page URL available: {full_next_url}")
+                logger.info(f"🔗 Next page URL available: {full_next_url}")
             else:
-                print("⚠️ No subsequent page links found.")
+                logger.info("⚠️ No subsequent page links found.")
 
             # 4. Create a list from the fields array
             # CKAN fields typically arrive as objects, extract the unique text id/name
             fields_array = result.get("fields", [])
             field_headers = [field["id"] for field in fields_array if "id" in field]
-            print(f"📋 Extracted Field Headers ({len(field_headers)}): {field_headers}")
+            logger.info(f"📋 Extracted Field Headers ({len(field_headers)}): {field_headers}")
 
             # 5. Create a Pandas DataFrame using records and strict headers
             records_array = result.get("records", [])
-            print(f"📋 Extracted {self.import_size} records")
+            logger.info(f"📋 Extracted {self.import_size} records")
 
             # Passing explicit columns ensures structural consistency and order
             df = pd.DataFrame(records_array, columns=field_headers)
             self.df = pd.concat([self.df, df])
 
-            print("\n📊 Generated Pandas Dataframe:")
-            print(df.head())
+            logger.info("\n📊 Generated Pandas Dataframe:")
+            logger.debug(df.head())
         except ue.URLError as net_err:
-            print(f"❌ Network connection or URL error encountered: {net_err}")
+            logger.error(f"❌ Network connection or URL error encountered: {net_err}")
         except KeyError as key_err:
-            print(f"❌ Structural parsing error: Key {key_err} missing from payload.")
+            logger.error(f"❌ Structural parsing error: Key {key_err} missing from payload.")
         except Exception as err:
-            print(f"❌ An unexpected runtime issue occurred: {err}")
+            logger.error(f"❌ An unexpected runtime issue occurred: {err}")
         finally:
             return full_next_url
