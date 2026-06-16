@@ -1,0 +1,76 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'CloudFormation template for S3, Glue Database with partitioned Parquet Table, and Athena Workgroup.'
+
+Resources:
+  # 1. Creates the S3 Bucket
+  EmsIncidentsBucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: 'ems-incidents'           # Change this if the name is globally taken
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+  # 2. Creates the Glue Database
+  GlueDatabase:
+    Type: 'AWS::Glue::Database'
+    Properties:
+      CatalogId: !Ref 'AWS::AccountId'
+      DatabaseInput:
+        Name: 'ams_db'
+        Description: 'External database for EMS incident data'
+
+  # 3. Creates the Partitioned External Glue Table
+  GlueTable:
+    Type: 'AWS::Glue::Table'
+    DependsOn: GlueDatabase
+    Properties:
+      CatalogId: !Ref 'AWS::AccountId'
+      DatabaseName: 'ams_db'
+      TableInput:
+        Name: 'indiana_ems'
+        Description: 'External table for Indiana EMS incidents with state and year partitions'
+        TableType: 'EXTERNAL_TABLE'
+        Parameters:
+          EXTERNAL: 'TRUE'
+          parquet.compression: 'SNAPPY'
+        StorageDescriptor:
+          # Root location updated to reflect the new partitioning strategy
+          Location: !Sub 's3://${EmsIncidentsBucket}/'
+          InputFormat: 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat'
+          OutputFormat: 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
+          Compressed: true
+          SerdeInfo:
+            SerializationLibrary: 'org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe'
+            Parameters:
+              'serialization.format': '1'
+          Columns:
+            - Name: 'id'
+              Type: 'int'
+            - Name: 'incident_dt'
+              Type: 'string'
+            - Name: 'incident_county'
+              Type: 'string'
+        # Partition keys are defined separately from regular columns
+        PartitionKeys:
+          - Name: 'state'
+            Type: 'string'
+          - Name: 'year'
+            Type: 'int'
+
+  # 4. Creates the Athena Workgroup
+  AthenaWorkGroup:
+    Type: 'AWS::Athena::WorkGroup'
+    DependsOn: EmsIncidentsBucket
+    Properties:
+      Name: 'ams_athena_workgroup'
+      Description: 'Workgroup for querying ams_db incident data'
+      State: 'ENABLED'
+      WorkGroupConfiguration:
+        EnforceWorkGroupConfiguration: true
+        PublishCloudWatchMetricsEnabled: true
+        ResultConfiguration:
+          # Automatically targets the athena-results/ folder inside your new bucket
+          OutputLocation: !Sub 's3://${EmsIncidentsBucket}/athena-results/'
