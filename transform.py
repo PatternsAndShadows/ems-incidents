@@ -1,8 +1,11 @@
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Extract module ~~~~~
+import logging
+
+logger = logging.getLogger(__name__)
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ EmergencyMedicalServiceRunsTransformer ~~~
 #   Base class for transforming EMS datasets
 #
-import pandas as pd
-
 class EmergencyMedicalServiceRunsTransformer:
     def __init__(self, args: str):
         self.source_file = args.source

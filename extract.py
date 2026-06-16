@@ -1,11 +1,14 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Extract module ~~~~~
 import os
 import ijson
+import logging
 import json
 import pandas as pd
 import urllib.request as ur
 import urllib.parse as up
 import urllib.error as ue
+
+logger = logging.getLogger(__name__)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ JsonDataExtractor ~~~
 #   Base class for transforming EMS datasets
@@ -22,9 +25,12 @@ class JsonDataExtractor:
                                     # test = reserved, not currently used
                                     # live = extract the entire dataset
 
+        logger.debug(f"import size set to {self.import_size}")
+
     # extract dataset from the website directly, no need to download the json file first.
     # This is a virtual function, it needs to be implemented in any derived classes
     def extract_sourcedata(self, source_dataset):
+        logging.debug("you've reached the base class, virtual method extract_sourcedata. this method should be overwritten in a derived class")
         pass
 
     # this method does a lazy load of a locally stored json file, where the schema and records are in seperate arrays
