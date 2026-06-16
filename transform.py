@@ -44,7 +44,7 @@ class IndianaEmsTransform(EmergencyMedicalServiceRunsTransformer):
     def transform_ems_incident_data(self):
         try:
             self.validate_dataframe()
-            self.replace_nulls(column_name='DESTINATION_TYPE')
+            self.replace_nulls(column_name='INCIDENT_COUNTY')
         except Exception as ex:
             print(ex)
 

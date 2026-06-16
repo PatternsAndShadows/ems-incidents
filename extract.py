@@ -19,7 +19,7 @@ class JsonDataExtractor:
         self.df = None
 
         #TODO move these parameters to a config file
-        self.import_size = 5000
+        self.import_size = 15000
         self.run_state = 'sample'   # options: ['sample' | 'test' | 'live' ]
                                     # sample = only extract one 'import_size' worth of data
                                     # test = reserved, not currently used
@@ -87,6 +87,7 @@ class IdhsDataExtractor(JsonDataExtractor):
                 break
             else:
                 full_url = next_url
+        return self.df
 
     def get_emsr_incidents_dataset(self, source_url):
         df = None

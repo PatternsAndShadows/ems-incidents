@@ -40,19 +40,6 @@ class TestJsonDataExtractor(unittest.TestCase):
         self.assertEqual(headers, ["col1", "col2"])
         mock_file.assert_called_once_with("fake_file.json", "rb")
 
-    # @patch('extract.ijson.items')
-    # @patch('builtins.open', new_callable=mock_open)
-    # def test_get_source_records_chunking(self, mock_file, mock_ijson_items):
-    #     """Should yield chunks matching the import_size threshold."""
-    #     # Yield 3 rows total. With import_size=2, it should yield 2 chunks (size 2 and size 1)
-    #     mock_ijson_items.return_value = [["r1_v1", "r1_v2"], ["r2_v1", "r2_v2"], ["r3_v1", "r3_v2"]]
-    #
-    #     chunks = list(self.extractor.get_source_records())
-    #
-    #     self.assertEqual(len(chunks), 2)
-    #     self.assertEqual(len(chunks[0]), 2)  # First chunk limit reached
-    #     self.assertEqual(len(chunks[1]), 1)  # Leftovers
-
     @patch('os.path.exists')
     def test_load_json_file_success(self, mock_exists):
         """Should combine headers and chunked rows into a single unified DataFrame."""
