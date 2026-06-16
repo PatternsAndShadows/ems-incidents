@@ -9,7 +9,7 @@ class EmergencyMedicalServiceRunsTransformer:
         self.df = None
 
         #TODO move these parameters to a config file
-        self.import_size = 5000
+        self.import_size = 25000
 
     def set_df(self, df):
         self.df = df
@@ -21,7 +21,7 @@ class EmergencyMedicalServiceRunsTransformer:
         pass
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ validate_dataframe ~~~
-    #   This method calls the validation methods that are relavant to the Indiana dataset
+    #   This method calls the validation methods that are relevant to the Indiana dataset
     def validate_dataframe(self):
         # identify bad data
         #   tag it or move it to a DLQ (dead letter queue)
