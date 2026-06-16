@@ -45,14 +45,9 @@ if __name__ == '__main__':
 
 
 
-# TODO: add logging
-#   1. to rotating files
-#   2. to kafka for real time monitoring
-
+# TODO: add logging to kafka for real time monitoring
 # TODO: Create a property file, move configuration to it
-
 # TODO: Create github deployment pipeline
-
 # TODO: parallize the ETL process
 #       extract first chunk of records
 #           transform that chunk
